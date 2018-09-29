@@ -14,8 +14,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
@@ -32,24 +34,27 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 8934311133130247513L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "user_sequence")
-    @SequenceGenerator(name = "user_sequence", sequenceName = "USER_SEQ")
-	private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 	
 	@Column(name = "name")
 	private String name;
-	
+	 
+	@JsonIgnore
 	@NotNull
 	@Column(name="password")
 	private String password;
 	
 	@NotNull
-	@Column(name="emailId")
+	@Column(name="emailId", unique=true)
 	private String emailId;
-
+	
+	@Column(name="mobileNumber")
+	private String mobileNumber;
+	
 	/**
      * Roles are being eagerly loaded here because
-     * they are a fairly small collection of items for this example.
+     * they are a fairly small collection of items for these users.
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns

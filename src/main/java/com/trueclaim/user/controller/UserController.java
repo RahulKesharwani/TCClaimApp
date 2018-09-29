@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,12 +22,8 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
-	@PostMapping("/login")
-	public User login(@RequestBody User user) {
-		return userService.login(user);
-	}
-	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	
 	@GetMapping("/users")
@@ -38,6 +35,7 @@ public class UserController {
 	@PostMapping("/user")
 	@PreAuthorize("hasAuthority('ADMIN_USER')")
 	public User createUser(@RequestBody User user) {
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 		return userService.createUser(user);
 	}
 	
